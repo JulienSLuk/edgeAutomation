@@ -30,7 +30,7 @@ def check_page(link, username, password, driver_path):
 # Method to read data from a CSV file and optionally skip the first row
 def read_csv(filename, skip_header=True):
     data = []
-    with open(filename, 'r') as file:
+    with open(filename, 'r', encoding='utf-8-sig') as file:
         reader = csv.reader(file)
         if skip_header:
             next(reader)  # Skip the first row (header)
@@ -39,13 +39,13 @@ def read_csv(filename, skip_header=True):
     return data
 
 # Read data from CSV files with headers skipped for some
-links = read_csv('links.csv')
-driver_paths = read_csv('driver_paths.csv')
+links = read_csv('links.csv', skip_header=False)
+driver_paths = read_csv('driver_paths.csv', skip_header=False)
 credentials = read_csv('credentials.csv', skip_header=True)
 
 # Check multiple links concurrently
 with concurrent.futures.ThreadPoolExecutor() as executor:
-    results = executor.map(check_page, links, [c[0] for c in credentials], [c[1] for c in credentials], driver_paths)
+    results = executor.map(check_page, links[0][0], [c[0] for c in credentials], [c[1] for c in credentials], driver_paths[0][0])
 
 # Print results
 for link, title in results:
