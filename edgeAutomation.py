@@ -4,7 +4,7 @@ import time
 import concurrent.futures
 import csv
 
-# Function to check if webpage is up after logging in
+# Function to check if a webpage is up after logging in
 def check_page(link, username, password, driver_path):
     driver = webdriver.Edge(executable_path=driver_path)
     driver.get(link)
@@ -27,35 +27,25 @@ def check_page(link, username, password, driver_path):
     
     return link, page_title
 
-# Read data from CSV files
-links = []
-driver_paths = []
-usernames = []
-passwords = []
+# Method to read data from a CSV file and optionally skip the first row
+def read_csv(filename, skip_header=True):
+    data = []
+    with open(filename, 'r') as file:
+        reader = csv.reader(file)
+        if skip_header:
+            next(reader)  # Skip the first row (header)
+        for row in reader:
+            data.append(row)
+    return data
 
-with open('links.csv', 'r') as file:
-    reader = csv.reader(file)
-    for row in reader:
-        links.append(row[0])
-
-with open('driver_paths.csv', 'r') as file:
-    reader = csv.reader(file)
-    for row in reader:
-        driver_paths.append(row[0])
-
-with open('usernames.csv', 'r') as file:
-    reader = csv.reader(file)
-    for row in reader:
-        usernames.append(row[0])
-
-with open('passwords.csv', 'r') as file:
-    reader = csv.reader(file)
-    for row in reader:
-        passwords.append(row[0])
+# Read data from CSV files with headers skipped for some
+links = read_csv('links.csv')
+driver_paths = read_csv('driver_paths.csv')
+credentials = read_csv('credentials.csv', skip_header=True)
 
 # Check multiple links concurrently
 with concurrent.futures.ThreadPoolExecutor() as executor:
-    results = executor.map(check_page, links, usernames, passwords, driver_paths)
+    results = executor.map(check_page, links, [c[0] for c in credentials], [c[1] for c in credentials], driver_paths)
 
 # Print results
 for link, title in results:
