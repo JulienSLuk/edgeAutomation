@@ -1,5 +1,5 @@
 from selenium import webdriver
-from selenium.webdriver.common.by import By  # Import By
+from selenium.webdriver.common.by import By
 import time
 import concurrent.futures
 import csv
@@ -11,7 +11,7 @@ def check_page(link, username, password):
     driver.get(link)
     
     # Log in
-    username_field = driver.find_element(By.ID, "username")  # Use find_element with By.ID
+    username_field = driver.find_element(By.ID, "username")
     password_field = driver.find_element(By.ID, "password")
     submit_button = driver.find_element(By.ID, "submit")
     
@@ -41,12 +41,11 @@ def read_csv(filename, skip_header=True):
 
 # Read data from CSV files with headers skipped for some
 links = read_csv('links.csv', skip_header=False)
-# driver_paths = read_csv('driver_paths.csv', skip_header=False)
 credentials = read_csv('credentials.csv', skip_header=True)
 
 # Check multiple links concurrently
 with concurrent.futures.ThreadPoolExecutor() as executor:
-    results = executor.map(check_page, links[0], [c[0] for c in credentials], [c[1] for c in credentials])
+    results = executor.map(lambda link: check_page(link[0], credentials[0][0], credentials[0][1]), links)
 
 # Print results
 for link, title in results:
