@@ -1,18 +1,19 @@
 from selenium import webdriver
-from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.by import By  # Import By
 import time
 import concurrent.futures
 import csv
 
 # Function to check if a webpage is up after logging in
-def check_page(link, username, password, driver_path):
-    driver = webdriver.Edge(executable_path=driver_path)
+def check_page(link, username, password):
+    # Initialize the Edge WebDriver (assuming msedgedriver.exe is in PATH or WebDriver Manager is used)
+    driver = webdriver.Edge()
     driver.get(link)
     
     # Log in
-    username_field = driver.find_element_by_id("username")
-    password_field = driver.find_element_by_id("password")
-    submit_button = driver.find_element_by_id("submit")
+    username_field = driver.find_element(By.ID, "username")  # Use find_element with By.ID
+    password_field = driver.find_element(By.ID, "password")
+    submit_button = driver.find_element(By.ID, "submit")
     
     username_field.send_keys(username)
     password_field.send_keys(password)
@@ -40,12 +41,12 @@ def read_csv(filename, skip_header=True):
 
 # Read data from CSV files with headers skipped for some
 links = read_csv('links.csv', skip_header=False)
-driver_paths = read_csv('driver_paths.csv', skip_header=False)
+# driver_paths = read_csv('driver_paths.csv', skip_header=False)
 credentials = read_csv('credentials.csv', skip_header=True)
 
 # Check multiple links concurrently
 with concurrent.futures.ThreadPoolExecutor() as executor:
-    results = executor.map(check_page, links[0][0], [c[0] for c in credentials], [c[1] for c in credentials], driver_paths[0][0])
+    results = executor.map(check_page, links[0], [c[0] for c in credentials], [c[1] for c in credentials])
 
 # Print results
 for link, title in results:
