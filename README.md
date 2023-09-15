@@ -25,7 +25,7 @@ Follow these steps to use the program effectively:
      - `username`: The username to use for logging in.
      - `password`: The password to use for logging in.
 
-   Here's an example structure for the `info.csv` file:
+   Here's an example structure for the `info.csv` file: <br>
    link,username_id,password_id,login_id,username,password
    https://example.com,usernameField,passwordField,loginButton,user123,Password123
    https://another-site.com,usernameInput,passwordInput,loginBtn,admin,SecretPwd
