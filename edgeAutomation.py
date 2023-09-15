@@ -3,11 +3,13 @@ from selenium.webdriver.common.by import By
 import time
 import concurrent.futures
 import csv
+from selenium.webdriver.edge.service import Service
 
 # Function to check if a webpage is up after logging in
-def check_page(link, username, password):
-    # Initialize the Edge WebDriver (assuming msedgedriver.exe is in PATH or WebDriver Manager is used)
-    driver = webdriver.Edge()
+def check_page(edge_driver_path, link, username, password):
+    # WebDriver services
+    service = Service(edge_driver_path)
+    driver = webdriver.Edge(service=service)
     driver.get(link)
     
     # Log in
@@ -40,12 +42,14 @@ def read_csv(filename, skip_header=True):
     return data
 
 # Read data from CSV files with headers skipped for some
+edge_driver_path = read_csv('driver_paths.csv', skip_header=False)
 links = read_csv('links.csv', skip_header=False)
 credentials = read_csv('credentials.csv', skip_header=True)
 
+
 # Check multiple links concurrently
 with concurrent.futures.ThreadPoolExecutor() as executor:
-    results = executor.map(lambda link: check_page(link[0], credentials[0][0], credentials[0][1]), links)
+    results = executor.map(lambda link: check_page(edge_driver_path[0][0], link[0], credentials[0][0], credentials[0][1]), links)
 
 # Print results
 for link, title in results:
