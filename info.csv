@@ -1,0 +1,4 @@
+﻿link,username_id,password_id,login_id,username,password
+https://practicetestautomation.com/practice-test-login/,username,password,submit,student,Password123
+https://www.saucedemo.com/,user-name,password,login-button,standard_user,secret_sauce
+https://demoqa.com/login,userName,password,login,testerUser,testerP@ssword123
